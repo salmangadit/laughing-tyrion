@@ -10,17 +10,6 @@ var express = require('express')
   , http = require('http')
   , path = require('path');
 
-var everyauth = require('everyauth');
-var connect = require('connect');
-
-var app = connect(
-    connect.bodyParser()
-  , connect.cookieParser()
-  , connect.session({secret: 'mr ripley'})
-  , everyauth.middleware()
-  , connect.router(routes)
-);
-
 var app = express();
 
 // all environments
