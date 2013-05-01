@@ -4,5 +4,5 @@
  */
 
 exports.index = function(req, res){
-  res.render('index', { title: 'Laughing Tyrion' });
+  res.render('index', { title: 'In-Tune' });
 };

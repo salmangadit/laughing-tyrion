@@ -10,6 +10,17 @@ var express = require('express')
   , http = require('http')
   , path = require('path');
 
+var everyauth = require('everyauth');
+var connect = require('connect');
+
+var app = connect(
+    connect.bodyParser()
+  , connect.cookieParser()
+  , connect.session({secret: 'mr ripley'})
+  , everyauth.middleware()
+  , connect.router(routes)
+);
+
 var app = express();
 
 // all environments
@@ -30,6 +41,8 @@ if ('development' == app.get('env')) {
 
 app.get('/', routes.index);
 app.get('/users', user.list);
+
+everyauth.helpExpress(app);
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
