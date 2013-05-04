@@ -47,6 +47,8 @@ block content
 			console.log('Welcome!  Fetching your information.... ');
 			FB.api('/me', function(response) {
 				console.log('Good to see you, ' + response.name + '.');
+				$('#hello').innerHTML = "'Good to see you, ' + response.name + '.'";
+				isLoggedIn = true;
 			});
 		}
 
@@ -61,8 +63,12 @@ block content
 			});
 		}
 
-	div(class='hero-unit pagination-centered')
-		h1= title
-		p A simple music sharing app made for everyone
-		button(onclick = "login();", class='btn-large btn-primary') Login via Facebook
-		//fb:login-button(show-faces="true" width="200" max-rows="1")
+	if(isLoggedIn==false)
+		div(class='hero-unit pagination-centered')
+			h1= title
+			p A simple music sharing app made for everyone
+			button(onclick = "login();", class='btn-large btn-primary') Login via Facebook
+			//fb:login-button(show-faces="true" width="200" max-rows="1")
+	else
+		div
+			p(id="hello") Test
