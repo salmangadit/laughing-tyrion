@@ -30,6 +30,8 @@ block content
 				FB.login();
 			}
 		});
+
+		console.log(#{isLoggedIn});
 		};
 		
 		// Load the SDK asynchronously
@@ -48,7 +50,7 @@ block content
 			FB.api('/me', function(response) {
 				console.log('Good to see you, ' + response.name + '.');
 				$('#hello').innerHTML = "'Good to see you, ' + response.name + '.'";
-				console.log(isLoggedIn);
+				console.log(#{isLoggedIn});
 				isLoggedIn = true;
 			});
 		}
@@ -58,7 +60,7 @@ block content
 				if (response.authResponse) {
 					// connected
 					testAPI();
-					
+
 				} else {
 					// cancelled
 				}
