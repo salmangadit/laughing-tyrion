@@ -49,6 +49,7 @@ block content
 				console.log('Good to see you, ' + response.name + '.');
 				$('#hello').innerHTML = "'Good to see you, ' + response.name + '.'";
 				isLoggedIn = true;
+				jade.render('index', { title: 'In-Tune', isLoggedIn: true });
 			});
 		}
 
