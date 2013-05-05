@@ -60,6 +60,7 @@ block content
 						switch (result) {
 							case true:
 								console.log("Successful data POST");
+								window.location = "/login";
 								break;
 							default:
 								//resultDiv.html(result);
@@ -71,7 +72,7 @@ block content
 					}
 				});
 
-				window.location = "/login";
+				
 			});
 		}
 
