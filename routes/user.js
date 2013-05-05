@@ -8,5 +8,8 @@ exports.list = function(req, res){
 };
 
 exports.store = function(req, res){
-  console.log("User "+req.body.data.firstname + " " + req.body.data.lastname);
+	console.log("Arrived");
+ 	console.log("User "+req.body.name + ", " + req.body.id);
+
+ 	res.end("true");
 };
