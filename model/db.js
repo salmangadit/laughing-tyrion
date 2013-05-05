@@ -9,8 +9,8 @@ process.env.MONGOHQ_URL ||
 var theport = process.env.PORT || 5000;
 
 var userSchema = new mongoose.Schema({
- first_name: String,
- last_name: String
+ name: String,
+ id: String
 });
 mongoose.model( 'Users', userSchema );
 
