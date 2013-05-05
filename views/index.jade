@@ -50,8 +50,7 @@ block content
 			FB.api('/me', function(response) {
 				console.log('Good to see you, ' + response.name + '.');
 				$('#hello').innerHTML = "'Good to see you, ' + response.name + '.'";
-				console.log(#{isLoggedIn});
-				#{isLoggedIn} = true;
+				window.location = "/login";
 			});
 		}
 
