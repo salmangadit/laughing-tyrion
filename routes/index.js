@@ -12,6 +12,7 @@ exports.index = function(req, res){
 
 exports.login = function(req, res){
 	req.session.loggedIn = true;
+	loggedIn = req.session.loggedIn;
 	res.render('index', { title: 'In-Tune', isLoggedIn: loggedIn });
 }
 
