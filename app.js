@@ -19,6 +19,8 @@ app.set('view engine', 'jade');
 app.use(express.favicon());
 app.use(express.logger('dev'));
 app.use(express.bodyParser());
+app.use(express.cookieParser());
+app.use(express.session({ secret:'laughing-tyrion'}));
 app.use(express.methodOverride());
 app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
@@ -29,6 +31,7 @@ if ('development' == app.get('env')) {
 }
 
 app.get('/', routes.index);
+app.get('/login', routes.login);
 app.get('/users', user.list);
 
 http.createServer(app).listen(app.get('port'), function(){

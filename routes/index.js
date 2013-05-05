@@ -4,5 +4,14 @@
  */
 
 exports.index = function(req, res){
-  res.render('index', { title: 'In-Tune', isLoggedIn: false });
+	var loggedIn = false;
+	loggedIn = req.session.loggedIn ? req.session.loggedIn : false;
+	console.log('isLoggedIn server side: ' + loggedIn);
+  res.render('index', { title: 'In-Tune', isLoggedIn: loggedIn });
 };
+
+exports.login = function(req, res){
+	req.session.loggedIn = true;
+	res.render('index', { title: 'In-Tune', isLoggedIn: loggedIn });
+}
+
