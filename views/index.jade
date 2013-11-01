@@ -45,8 +45,8 @@ block content
 
 		function testAPI() {
 			console.log('Welcome!  Fetching your information.... ');
-			FB.api('/me/feed?fields=type,source,from,to&limit=5000', function(response) {
-				//- console.log(response);
+			FB.api('/me/feed?fields=type,source,from,to,full_picture&limit=2000', function(response) {
+				console.log(response.paging);
 
 				for (var i=0; i<response.data.length; i++){
 					if (response.data[i].type == "video")
