@@ -45,7 +45,7 @@ block content
 
 		function testAPI() {
 			console.log('Welcome!  Fetching your information.... ');
-			FB.api('/me/feed', function(response) {
+			FB.api('/me/feed?type=video', function(response) {
 				console.log(response);
 			});
 		}
