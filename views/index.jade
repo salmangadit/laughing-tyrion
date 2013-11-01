@@ -45,8 +45,15 @@ block content
 
 		function testAPI() {
 			console.log('Welcome!  Fetching your information.... ');
-			FB.api('/me/feed?type=video', function(response) {
-				console.log(response);
+			FB.api('me/feed?fields=type,source,from,to&limit=5000', function(response) {
+				//- console.log(response);
+
+				for (int i=0; i<response.data.length; i++){
+					if (response.data[i].type == "video")
+					{
+						console.log(response.data[i]);
+					}
+				}
 			});
 		}
 
@@ -67,6 +74,7 @@ block content
 							window.location = "/login";
 							break;
 						default:
+							 console.log("Went to default");
 							//resultDiv.html(result);
 					}
 				},
