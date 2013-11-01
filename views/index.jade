@@ -43,14 +43,10 @@ block content
 			ref.parentNode.insertBefore(js, ref);
 		}(document));
 
-		// Here we run a very simple test of the Graph API after login is successful. 
-		// This testAPI() function is only called in those cases. 
 		function testAPI() {
 			console.log('Welcome!  Fetching your information.... ');
-			FB.api('/me', function(response) {
-				
-
-				
+			FB.api('/me/feed', function(response) {
+				console.log(response);
 			});
 		}
 
@@ -85,31 +81,31 @@ block content
 			// @TODO: Comment this line out and uncomment the rest!
 			//window.location = "/login";
 
-			//FB.login(function(response) {
-			//	if (response.authResponse) {
-			//		// connected
-			//		testAPI();
-			//
-			//	} else {
-			//		// cancelled
-			//	}
-			//});
+			FB.login(function(response) {
+				if (response.authResponse) {
+					// connected
+					testAPI();
+			
+				} else {
+					// cancelled
+				}
+			}, {scope: 'email,read_stream'});
 
-			info();
+			//info();
 		}
 
 	if(isLoggedIn==false)
 		div(class='hero-unit pagination-centered')
 			h1= title
-			p A simple music sharing app made for everyone
+			p Organise your social media clutter.
 			button(onclick = "login();", class='btn-large btn-primary') Login via Facebook
 			//fb:login-button(show-faces="true" width="200" max-rows="1")
 	else
 		div(style="background-color:rgb(238, 238, 238);")
 			div(class="header row well")
 				div(class="span3 pagination-centered")
-					h1 In-Tune
-					h6 A simpler way to share music
+					h1 Shelf
+					h6 Because every wall needs one
 				div(class="span9")
 
 			hr(class="soften", style="border-bottom-color:#A8A8A8;")
