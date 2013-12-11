@@ -24,6 +24,7 @@ var postSchema = new mongoose.Schema({
 	post_title: String,
 	post_image: String,
 	post_tags: [String],
+	post_by: String,
 	created_time: String
 });
 

@@ -42,6 +42,9 @@ app.get('/user/:fbid/posts', posts.findByUser);
 app.get('/posts/:id', posts.findByPostId);
 app.post('/posts', posts.createPosts);
 
+//scrapers
+app.get('/poster/:fbid', posts.scrapeFeed);
+
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
 });
