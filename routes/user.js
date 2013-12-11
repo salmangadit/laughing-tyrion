@@ -3,9 +3,13 @@
  * GET users listing.
  */
 var db = require('../model/db')
+var users = require('../model/users')
 
 exports.list = function(req, res){
-  res.send("respond with a resource");
+  users.userlist(function(err, result){
+  	if(err) return console.log(err);
+  	res.send(result);
+  })
 };
 
 exports.store = function(req, res){
@@ -14,5 +18,11 @@ exports.store = function(req, res){
  	db.findOrCreateUser(req.body, function(){
  		res.end("true");
  	});
- 	
 };
+
+exports.getOne = function(req, res){
+	users.getOne(req.params.id, function(err, result){
+		if (err) return console.log(err);
+		res.send(result);
+	});
+}

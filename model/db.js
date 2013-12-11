@@ -41,7 +41,7 @@ var createUser = function(user,callback){
 exports.findOrCreateUser = function(user, callback){
 	console.log(user);
 	console.log(callback);
-    User.findOne({id: user.id}, null, function(err, result){
+    User.findOne({fb_id: user.fb_id}, null, function(err, result){
     	console.log('findOne result: ' + result);
       if (err) {
         console.log(err);
