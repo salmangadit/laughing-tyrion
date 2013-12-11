@@ -9,13 +9,25 @@ process.env.MONGOHQ_URL ||
 var theport = process.env.PORT || 5000;
 
 var userSchema = new mongoose.Schema({
- name: String,
- fb_id: String,
- fb_fname: String,
- fb_lname: String,
- fb_token: String
+	name: String,
+	fb_id: String,
+	fb_fname: String,
+	fb_lname: String,
+	fb_token: String
 });
 var User = mongoose.model( 'Users', userSchema );
+
+var postSchema = new mongoose.Schema({
+	fb_id: String,
+	post_type: {type:String, enum:['music', 'video']},
+	post_link: String,
+	post_title: String,
+	post_image: String,
+	post_tags: [String],
+	created_time: String
+});
+
+var Post = mongoose.model('Posts', postSchema );
 
 // Makes connection asynchronously.  Mongoose will queue up database
 // operations and release them when the connection is complete.

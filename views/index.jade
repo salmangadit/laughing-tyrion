@@ -68,7 +68,7 @@ block content
 						switch (result) {
 							case true:
 								console.log("Successful data POST");
-								
+
 								break;
 							default:
 								console.log("Went to default");
@@ -91,6 +91,9 @@ block content
 					if (response.data[i].type == "video")
 					{
 						console.log(response.data[i]);
+						//For youtube videos
+						//https://www.googleapis.com/youtube/v3/videos?id=qKj1qpHTZfc&key=AIzaSyAZLyBapbZnXBef4-gqQiKrYEXtOfRDyh0&part=snippet,statistics&fields=items(snippet(categoryId))
+						//We need response.items[0].snippet.categoryId
 					}
 				}
 			});
