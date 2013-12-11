@@ -32,8 +32,8 @@ if ('development' == app.get('env')) {
 
 app.get('/', routes.index);
 app.get('/login', routes.login);
-app.get('/users', user.list);
-app.get('/users/:fbid', user.getOne);
+app.get('/user', user.list);
+app.get('/user/:fbid', user.getOne);
 app.post('/user', user.store);
 
 //posts
