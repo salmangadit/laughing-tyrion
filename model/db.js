@@ -10,7 +10,10 @@ var theport = process.env.PORT || 5000;
 
 var userSchema = new mongoose.Schema({
  name: String,
- id: String
+ fb_id: String,
+ fb_fname: String,
+ fb_lname: String,
+ fb_token: String
 });
 var User = mongoose.model( 'Users', userSchema );
 

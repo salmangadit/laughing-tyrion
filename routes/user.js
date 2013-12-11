@@ -9,8 +9,7 @@ exports.list = function(req, res){
 };
 
 exports.store = function(req, res){
-	console.log("Arrived");
- 	console.log("User "+req.body.name + ", " + req.body.id);
+ 	console.log("User: "+req.body);
 
  	db.findOrCreateUser(req.body, function(){
  		res.end("true");

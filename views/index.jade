@@ -15,7 +15,7 @@ block content
 			// init the FB JS SDK
 			FB.init({
 			appId      : '576850129012966',                        // App ID from the app dashboard
-			channelUrl : 'http://arcane-atoll-7643.herokuapp.com/channel.html', // Channel file for x-domain comms
+			channelUrl : 'http://localhost:3000/channel.html', // Channel file for x-domain comms
 			status     : true,                                 // Check Facebook Login status
 			xfbml      : true                                  // Look for social plugins on the page
 			});
@@ -23,7 +23,13 @@ block content
 		FB.Event.subscribe('auth.authResponseChange', function(response) {
 			// Here we specify what we do with the response anytime this event occurs. 
 			if (response.status === 'connected') {
-				testAPI();
+				console.log(window.location);
+				if (window.location.pathname != "/login"){
+					window.location = "/login";
+					return;
+				}
+
+				info(response.authResponse.accessToken);
 			} else if (response.status === 'not_authorized') {
 				FB.login();
 			} else {
@@ -43,8 +49,40 @@ block content
 			ref.parentNode.insertBefore(js, ref);
 		}(document));
 
-		function testAPI() {
-			console.log('Welcome!  Fetching your information.... ');
+		function info(accessToken){
+		console.log('Creating/Finding user');
+			FB.api('/me', function(response) {
+				console.log(response);
+				$.ajax({
+					url: "/user",
+					type: "POST",
+					data: { 
+						fb_fname: response.first_name, 
+						fb_lname:response.last_name, 
+						fb_id: response.id, 
+						fb_token:	accessToken
+							},
+					dataType: "json",
+					success: function (result) {
+						console.log(result);
+						switch (result) {
+							case true:
+								console.log("Successful data POST");
+								break;
+							default:
+								console.log("Went to default");
+								//resultDiv.html(result);
+						}
+					},
+					error: function (xhr, ajaxOptions, thrownError) {
+						console.log(xhr.status);
+						console.log(thrownError);
+					}
+				});
+			});
+		}
+
+		function scrapeFeed(){
 			FB.api('/me/feed?fields=type,source,from,to,full_picture&limit=2000', function(response) {
 				console.log(response.paging);
 
@@ -57,47 +95,19 @@ block content
 			});
 		}
 
-		function info(){
-			//console.log('Good to see you, ' + response.name + '.');
-			//$('#hello').innerHTML('Good to see you, ' + response.name + '.');
-
-			$.ajax({
-				url: "/user",
-				type: "POST",
-				data: { name: "Salman Gadit", id: "1"},
-				dataType: "json",
-				success: function (result) {
-					console.log(result);
-					switch (result) {
-						case true:
-							console.log("Successful data POST");
-							window.location = "/login";
-							break;
-						default:
-							console.log("Went to default");
-							//resultDiv.html(result);
-					}
-				},
-				error: function (xhr, ajaxOptions, thrownError) {
-					console.log(xhr.status);
-					console.log(thrownError);
-				}
-			});
-		}
-
 		function login() {
 			// @TODO: Comment this line out and uncomment the rest!
 			//window.location = "/login";
 
-			//- FB.login(function(response) {
-			//- 	if (response.authResponse) {
-			//- 		// connected
-			//- 		testAPI();
+			FB.login(function(response) {
+				if (response.authResponse) {
+					// connected
+					testAPI();
 			
-			//- 	} else {
-			//- 		// cancelled
-			//- 	}
-			//- }, {scope: 'email,read_stream'});
+				} else {
+					// cancelled
+				}
+			}, {scope: 'email,read_stream'});
 
 			info();
 		}
@@ -109,8 +119,7 @@ block content
 			button(onclick = "login();", class='btn-large btn-primary') Login via Facebook
 			//fb:login-button(show-faces="true" width="200" max-rows="1")
 	else
-		div(style="background-color:1
-			rgb(238, 238, 238);")
+		div(style="background-color:rgb(238, 238, 238);")
 			div(class="header row well")
 				div(class="span3 pagination-centered")
 					h1 Shelf
@@ -151,10 +160,3 @@ block content
 						h3 Jill Pill
 						h5 What are we doing
 						img(src="/img/t20final.jpg")
-				//-div(class="span9 pagination-centered")
-					//-br
-					//-input(type="text", height="300", rows="3", placeholder="Place song link here...", class="input-xxlarge")
-					//-br
-					//-input(type="text", placeholder="Start typing Facebook friends to tag...", class="input-xxlarge")
-					//-br
-					//-button(onclick = "", class='btn-large btn-warning') Tune in!
