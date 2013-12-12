@@ -84,19 +84,6 @@ block content
 		}
 
 		function scrapeFeed(fbid){
-			//- FB.api('/me/feed?fields=type,source,from,to,full_picture&limit=2000', function(response) {
-			//- 	console.log(response.paging);
-
-			//- 	for (var i=0; i<response.data.length; i++){
-			//- 		if (response.data[i].type == "video")
-			//- 		{
-			//- 			console.log(response.data[i]);
-			//- 			//For youtube videos
-			//- 			//https://www.googleapis.com/youtube/v3/videos?id=qKj1qpHTZfc&key=AIzaSyAZLyBapbZnXBef4-gqQiKrYEXtOfRDyh0&part=snippet,statistics&fields=items(snippet(categoryId))
-			//- 			//We need response.items[0].snippet.categoryId
-			//- 		}
-			//- 	}
-			//- });
 				$.ajax({
 					url: "/poster/"+fbid,
 					type: "GET",

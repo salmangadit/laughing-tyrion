@@ -19,6 +19,7 @@ var User = mongoose.model( 'Users', userSchema );
 
 var postSchema = new mongoose.Schema({
 	fb_id: String,
+	post_id: String,
 	post_type: {type:String, enum:['music', 'video']},
 	post_link: String,
 	post_title: String,
@@ -29,6 +30,16 @@ var postSchema = new mongoose.Schema({
 });
 
 var Post = mongoose.model('Posts', postSchema );
+
+var scrapeDataSchema = new mongoose.Schema({
+	fb_id: String,
+	previous_timestamp: String,
+	previous: String,
+	next: String,
+	next_timeStamp: String
+});
+
+var ScrapeData = mongoose.model('ScrapeData', scrapeDataSchema );
 
 // Makes connection asynchronously.  Mongoose will queue up database
 // operations and release them when the connection is complete.

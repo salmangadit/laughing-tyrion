@@ -4,8 +4,8 @@ var users = require('../model/users');
 var request = require('request');
 
 exports.createPosts = function(req, res){
-	posts.createPost(req.body, function(){
- 		res.end("true");
+	posts.createPost(req.body, function(err, result){
+ 		res.send(result);
  	});
 }
 
@@ -23,7 +23,6 @@ exports.findByPostId = function(req, res){
   })
 }
 
-var postArray = [];
 exports.scrapeFeed = function(req, res){
 	var fbid = req.params.id;
 	users.getOne(req.params.fbid, function(err, result){
@@ -33,102 +32,107 @@ exports.scrapeFeed = function(req, res){
 	});
 }
 
-var itemCount = 0;
-var main_response = null;
-
 function getFBfeed(user, res){
-	main_response = res;
-	request('https://graph.facebook.com/'+user.fb_id+"/feed?access_token="+user.fb_token+"&fields=type,source,from,to,full_picture&limit=2000", function (error, response, body) {
+	var itemCount = 0;
+	var pagination = "";
+	var postArray = [];
+	//console.log(user);
+	var call = 'https://graph.facebook.com/'+user.fb_id+"/feed?access_token="+user.fb_token+"&fields=type,source,from,to,full_picture&limit=100";
+	//console.log(call);
+	request(call, function (error, response, body) {
+		//console.log(response.statusCode);
+		//console.log(body);
 		if (!error && response.statusCode == 200) {
 			var videoArray = [];
 			var videoData = JSON.parse(body);
-			//console.log(body.data.length);
 			
+			pagination = videoData.paging;
 		 	for (var i=0; i<videoData.data.length; i++){
 		 		if (videoData.data[i].type == "video")
 				{
-		 			// console.log(response.data[i]);
 		 			if (videoData.data[i].source.indexOf("youtube.com") != -1){
 		 				itemCount++;
 		 				console.log(itemCount);
 		 				var videoId = videoData.data[i].source.substring(25,36);
-		 				getYouTubeVideoCategory(videoId, videoData.data[i], user.fb_id);
-		 			}
+		 				(function(index){
+		 					request("https://www.googleapis.com/youtube/v3/videos?id="+videoId+"&key=AIzaSyAZLyBapbZnXBef4-gqQiKrYEXtOfRDyh0&part=snippet&fields=items(snippet(categoryId, title))", function (error, response, body) {
+								console.log("i is " + index );
+								itemCount--;
+								console.log(videoData.data[index]);
+								var fbBody = videoData.data[index];
+								if (!error && response.statusCode == 200) {
+									var bodyData = JSON.parse(body);
+									if (typeof bodyData.items[0] != 'undefined'){
+										if (typeof bodyData.items[0].snippet != 'undefined'){
+											if (typeof bodyData.items[0].snippet.categoryId != 'undefined'){
+												if (bodyData.items[0].snippet.categoryId == 10){
+													//Save as music post
+													var postObject = new Object();
+													postObject.fb_id = user.fb_id;
+													postObject.post_id = fbBody.id;
+													postObject.post_typ = 'music';
+													postObject.post_link = fbBody.source;
+													postObject.post_title = bodyData.items[0].snippet.title;
+													postObject.post_image = fbBody.full_picture
+													postObject.post_by = fbBody.from.id;
+													postObject.post_tags = [];
+													if (typeof fbBody.to != 'undefined'){
+														for (var i=0; i<fbBody.to.data.length; i++){
+															postObject.post_tags.push(fbBody.to.data[i].id);
+														}
+													}
+													
+													postObject.created_time = fbBody.created_time;
 
-		 			//For youtube videos
-		 			//https://www.googleapis.com/youtube/v3/videos?id=qKj1qpHTZfc&key=AIzaSyAZLyBapbZnXBef4-gqQiKrYEXtOfRDyh0&part=snippet,statistics&fields=items(snippet(categoryId))
-		 			//We need response.items[0].snippet.categoryId
-		 		}
-		 	}
-		}
-	});
+													postArray.push(postObject);
+												} else {
+													//Save as video post
+													var postObject = new Object();
+													postObject.fb_id = user.fb_id;
+													postObject.post_id = fbBody.id;
+													postObject.post_typ = 'video';
+													postObject.post_link = fbBody.source;
+													postObject.post_title = bodyData.items[0].snippet.title;
+													postObject.post_image = fbBody.full_picture
+													postObject.post_by = fbBody.from.id;
+													postObject.post_tags = [];		
+													if (typeof fbBody.to != 'undefined'){
+														for (var i=0; i<fbBody.to.data.length; i++){
+															postObject.post_tags.push(fbBody.to.data[i].id);
+														}
+													}
+													
+													postObject.created_time = fbBody.created_time;
+
+													postArray.push(postObject);
+												}
+												//console.log(videoId+" : " + youTubePostType[JSON.parse(body).items[0].snippet.categoryId]);	
+											} //end if (typeof bodyData.items[0].snippet.categoryId != 'undefined')
+										} //end if (typeof bodyData.items[0].snippet != 'undefined')
+									} //end if (typeof bodyData.items[0] != 'undefined')
+								} //end if (!error && response.statusCode == 200)
+								console.log(itemCount);
+								if (itemCount == 0){
+									renderCompleted(user.fb_id, pagination, postArray, res);
+								} //end render
+							}); //end youtube request
+						})(i); //end closure
+		 			}//end if (videoData.data[i].source.indexOf("youtube.com") != -1)
+		 		}//end if (videoData.data[i].type == "video")
+		 	}//end for
+		} //end if (!error && response.statusCode == 200)
+	}); //end fb request
 }
 
-function getYouTubeVideoCategory(videoId, fbBody, fbid){
-	//console.log(videoId); 
-	request("https://www.googleapis.com/youtube/v3/videos?id="+videoId+"&key=AIzaSyAZLyBapbZnXBef4-gqQiKrYEXtOfRDyh0&part=snippet&fields=items(snippet(categoryId, title))", function (error, response, body) {
-		itemCount--;
-		//console.log(fbBody);
-		if (!error && response.statusCode == 200) {
-			var bodyData = JSON.parse(body);
-			if (typeof bodyData.items[0] != 'undefined'){
-				if (typeof bodyData.items[0].snippet != 'undefined'){
-					if (typeof bodyData.items[0].snippet.categoryId != 'undefined'){
-						if (bodyData.items[0].snippet.categoryId == 10){
-							//Save as music post
-							var postObject = new Object();
-							postObject.fb_id = fbid;
-							postObject.post_typ = 'music';
-							postObject.post_link = fbBody.source;
-							postObject.post_title = bodyData.items[0].snippet.title;
-							postObject.post_image = fbBody.full_picture
-							postObject.post_by = fbBody.from.id;
-							postObject.post_tags = [];
-							if (typeof fbBody.to != 'undefined'){
-								for (var i=0; i<fbBody.to.data.length; i++){
-									postObject.post_tags.push(fbBody.to.data[i].id);
-								}
-							}
-							
-							postObject.created_time = fbBody.created_time;
+function renderCompleted(fbid, pagination, postArray, res){
+		res.send(JSON.stringify(postArray));
 
-							postArray.push(postObject);
-						} else {
-							//Save as video post
-							var postObject = new Object();
-							postObject.fb_id = fbid;
-							postObject.post_typ = 'video';
-							postObject.post_link = fbBody.source;
-							postObject.post_title = bodyData.items[0].snippet.title;
-							postObject.post_image = fbBody.full_picture
-							postObject.post_by = fbBody.from.id;
-							postObject.post_tags = [];		
-							if (typeof fbBody.to != 'undefined'){
-								for (var i=0; i<fbBody.to.data.length; i++){
-									postObject.post_tags.push(fbBody.to.data[i].id);
-								}
-							}
-							
-							postObject.created_time = fbBody.created_time;
+	//update pagination
+	// var paginationParams = new Object();
+	// paginationParams.fb_id = 
+	// posts.postNewPaginationParams()
 
-							postArray.push(postObject);
-						}
-						//console.log(videoId+" : " + youTubePostType[JSON.parse(body).items[0].snippet.categoryId]);	
-					}
-				}
-			}
-		}
-		console.log(itemCount);
-		if (itemCount == 0){
-			renderCompleted();
-		}
-	});
-}
-
-function renderCompleted(){
-	if (main_response != null){
-		main_response.send(JSON.stringify(postArray));
-	}
+	//posts.createPost
 }
 
 var youTubePostType = {
