@@ -36,7 +36,7 @@ var scrapeDataSchema = new mongoose.Schema({
 	previous_timestamp: String,
 	previous: String,
 	next: String,
-	next_timeStamp: String
+	next_timestamp: String
 });
 
 var ScrapeData = mongoose.model('ScrapeData', scrapeDataSchema );

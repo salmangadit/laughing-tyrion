@@ -1,9 +1,10 @@
 var mongoose = require('mongoose');
 var url = require('url');
 
-var postCount = 0;
+
 exports.createPost = function(post,callback){
 	var Posts = mongoose.model( 'Posts' );
+	var postCount = 0;
 	console.log(post);
 	//var toPost = JSON.parse(post);
 	postCount = post.length;
@@ -17,6 +18,7 @@ exports.createPost = function(post,callback){
 		    //console.log(res.length);
 		    if (res.length == 0){
 		    	//Nothing found
+		    	console.log("Nothing found");
 		    	Posts.create(post, function(err, result){
 		    		postCount--;
 		    		console.log("Post:" + postCount);
@@ -29,6 +31,7 @@ exports.createPost = function(post,callback){
 		    		}
 		    	});
 		    } else {
+		    	console.log("Exists");
 		    	postCount--;
 		    	console.log("Post:" + postCount);
 		    	if (postCount == 0){
@@ -67,25 +70,32 @@ exports.postlist = function postlist(id, callback){
 //scrapePagination
 
 exports.postNewPaginationParams = function postNewPaginationParams(params, callback){
-	var Pagination = mongoose.model('ScrapeData', scrapeDataSchema );
+	var Pagination = mongoose.model('ScrapeData');
 
-	var next_timestamp = url.parse(params.next, 'until');
-	var prev_timestamp = url.parse(params.previous, 'since');
+	var next_timestamp = url.parse(params.next, 'until').query.until;
+	var prev_timestamp = url.parse(params.previous, 'since').query.since;
 
-	Pagination.findOne({fb_id:params.fb_id}, function(err, result){
+	console.log(JSON.stringify(next_timestamp));
+
+	Pagination.find({fb_id:params.fb_id}, function(err, result){
 		if (err){
 			console.log(err);
 			callback(err, result);
 			return;
 		}
 
-		if (result){
-			if (parseInt(result.next_timestamp) > parseInt(next_timestamp) ){
+		if (result.length>0){
+			console.log("Found old pagination data");
+			if (parseInt(result[0].next_timestamp) > parseInt(next_timestamp) ){
+				console.log("Updated next_timestamp");
 				params.next_timestamp = next_timestamp;
-			}
+				params.next = result[0].next;
+			} 
 
-			if (parseInt(result.previous_timestamp) < parseInt(previous_timestamp) ){
-				params.previous_timestamp = previous_timestamp;
+			if (parseInt(result[0].previous_timestamp) < parseInt(prev_timestamp) ){
+				console.log("Updated prev_timestamp");
+				params.previous_timestamp = prev_timestamp;
+				params.previous = result[0].previous;
 			} 
 
 			Pagination.update({fb_id:params.fb_id}, params, function(err, result){
@@ -93,8 +103,9 @@ exports.postNewPaginationParams = function postNewPaginationParams(params, callb
 			});
 
 		} else {
+			console.log("No previous pagination data, creating new");
 			params.next_timestamp = next_timestamp;
-			params.previous_timestamp = previous_timestamp;
+			params.previous_timestamp = prev_timestamp;
 			Pagination.create(params, function(err, result){
 				callback(err,result);
 			});

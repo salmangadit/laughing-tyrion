@@ -87,17 +87,9 @@ block content
 				$.ajax({
 					url: "/poster/"+fbid,
 					type: "GET",
-					dataType: "json",
 					success: function (result) {
-						console.log(result);
-						switch (result) {
-							case true:
-								console.log(result);
-								break;
-							default:
-								console.log("Went to default");
-								//resultDiv.html(result);
-						}
+						console.log("Result:" + result);
+						//This should trigger feed and in backend scraping must continue
 					},
 					error: function (xhr, ajaxOptions, thrownError) {
 						console.log(xhr.status);

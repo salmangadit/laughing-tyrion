@@ -52,13 +52,13 @@ function getFBfeed(user, res){
 				{
 		 			if (videoData.data[i].source.indexOf("youtube.com") != -1){
 		 				itemCount++;
-		 				console.log(itemCount);
+		 				//console.log(itemCount);
 		 				var videoId = videoData.data[i].source.substring(25,36);
 		 				(function(index){
 		 					request("https://www.googleapis.com/youtube/v3/videos?id="+videoId+"&key=AIzaSyAZLyBapbZnXBef4-gqQiKrYEXtOfRDyh0&part=snippet&fields=items(snippet(categoryId, title))", function (error, response, body) {
-								console.log("i is " + index );
+								//console.log("i is " + index );
 								itemCount--;
-								console.log(videoData.data[index]);
+								//console.log(videoData.data[index]);
 								var fbBody = videoData.data[index];
 								if (!error && response.statusCode == 200) {
 									var bodyData = JSON.parse(body);
@@ -70,7 +70,7 @@ function getFBfeed(user, res){
 													var postObject = new Object();
 													postObject.fb_id = user.fb_id;
 													postObject.post_id = fbBody.id;
-													postObject.post_typ = 'music';
+													postObject.post_type = 'music';
 													postObject.post_link = fbBody.source;
 													postObject.post_title = bodyData.items[0].snippet.title;
 													postObject.post_image = fbBody.full_picture
@@ -78,7 +78,7 @@ function getFBfeed(user, res){
 													postObject.post_tags = [];
 													if (typeof fbBody.to != 'undefined'){
 														for (var i=0; i<fbBody.to.data.length; i++){
-															postObject.post_tags.push(fbBody.to.data[i].id);
+															postObject.post_tags.push(JSON.stringify(fbBody.to.data[i]));
 														}
 													}
 													
@@ -90,7 +90,7 @@ function getFBfeed(user, res){
 													var postObject = new Object();
 													postObject.fb_id = user.fb_id;
 													postObject.post_id = fbBody.id;
-													postObject.post_typ = 'video';
+													postObject.post_type = 'video';
 													postObject.post_link = fbBody.source;
 													postObject.post_title = bodyData.items[0].snippet.title;
 													postObject.post_image = fbBody.full_picture
@@ -98,7 +98,7 @@ function getFBfeed(user, res){
 													postObject.post_tags = [];		
 													if (typeof fbBody.to != 'undefined'){
 														for (var i=0; i<fbBody.to.data.length; i++){
-															postObject.post_tags.push(fbBody.to.data[i].id);
+															postObject.post_tags.push(JSON.stringify(fbBody.to.data[i]));
 														}
 													}
 													
@@ -111,7 +111,7 @@ function getFBfeed(user, res){
 										} //end if (typeof bodyData.items[0].snippet != 'undefined')
 									} //end if (typeof bodyData.items[0] != 'undefined')
 								} //end if (!error && response.statusCode == 200)
-								console.log(itemCount);
+								//console.log(itemCount);
 								if (itemCount == 0){
 									renderCompleted(user.fb_id, pagination, postArray, res);
 								} //end render
@@ -125,14 +125,24 @@ function getFBfeed(user, res){
 }
 
 function renderCompleted(fbid, pagination, postArray, res){
-		res.send(JSON.stringify(postArray));
+		//res.send(JSON.stringify(postArray));
 
 	//update pagination
-	// var paginationParams = new Object();
-	// paginationParams.fb_id = 
-	// posts.postNewPaginationParams()
+	var paginationParams = new Object();
+	paginationParams.fb_id = fbid;
+	paginationParams.next = pagination.next;
+	paginationParams.previous = pagination.previous;
+	posts.postNewPaginationParams(paginationParams, function(err, result){
+		if (err)
+			return res.send(err);
+		// res.send(result);
+		posts.createPost(postArray, function(err, result){
+			if (err)
+				return res.send(err);
 
-	//posts.createPost
+			res.send(result);
+		});
+	});
 }
 
 var youTubePostType = {
