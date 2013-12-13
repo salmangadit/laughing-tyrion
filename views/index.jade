@@ -102,7 +102,7 @@ block content
 			// @TODO: Comment this line out and uncomment the rest!
 			//window.location = "/login";
 
-			FB.login(function(response) {
+			FB.login(function(response) {	
 				if (response.authResponse) {
 					// connected
 					testAPI();
@@ -116,50 +116,100 @@ block content
 		}
 
 	if(isLoggedIn==false)
-		div(class='hero-unit pagination-centered')
-			h1= title
-			p Organise your social media clutter.
-			button(onclick = "login();", class='btn-large btn-primary') Login via Facebook
-			//fb:login-button(show-faces="true" width="200" max-rows="1")
+		br
+		br
+		div.row
+			.col-md-3
+			.jumbotron.text-center.col-md-6
+				h1= title
+				p Organise your social media clutter.
+				button(onclick = "login();", class='btn-lg btn-primary') Login via Facebook
+			.col-md-3
 	else
-		div(style="background-color:rgb(238, 238, 238);")
-			div(class="header row well")
-				div(class="span3 pagination-centered")
-					h1 Shelf
-					h6 Because every wall needs one
-				div(class="span9")
+		.navbar.navbar-default
+			.container
+				.navbar-header
+					button.navbar-toggle(type="button", data-toggle="collapse", data-target=".navbar-responsive-collapse")
+						span.icon-bar
+						span.icon-bar
+						span.icon-bar
+					a.navbar-brand(href="/") Shelf
+				.navbar-collapse.collapse.navbar-responsive-collapse
+					ul.nav.navbar-nav
+						li.active
+							a(href="#") Home
+						li
+							a(href="#") Library
+						li
+							a(href="#") Invite
+						li
+							a(href="#") About
+					ul.nav.navbar-nav.navbar-right
+						li
+							a(href="#") Profile
+						li
+							a(href="#") Settings
+						li
+							a(href="#") Logout
+						
+		//- div(class="header row well")
+		//- 	div(class="col-md-3")
+		//- 		h1 Shelf
+		//- 		h6 Because every wall needs one
+		//- 	div(class="col-md-9")
 
-			hr(class="soften", style="border-bottom-color:#A8A8A8;")
-			div(class="container")	
-				div(class="row")
-					div(class="span3")
-						div(class="well")
-							ul(class="nav nav-list")
-								li(class="active")
-									a(href="#") Home
-								li
-									a(href="#") Library
-								li
-									a(href="#") Invite
-								li(class="divider")
-								li
-									a(href="#") Profile
-								li
-									a(href="#") Settings
-								li(class="divider")
-								li
-									a(href="#") Logout
-								li
-									a(href="#") About
-					div(class="span3")
-						h3 Salman Gadit
-						h5 Interesting video
-						img(src="/img/t20final.jpg")
-					div(class="span3")
-						h3 John Doe
-						h5 Post title
-						img(src="/img/t20final.jpg")
-					div(class="span3")
-						h3 Jill Pill
-						h5 What are we doing
-						img(src="/img/t20final.jpg")
+		.container	
+			div.row
+				div.col-md-3
+					h1 Filter bar here
+				div.col-md-9.list-group
+					.list-group-item.row(style="background-color:rgb(252,252,252);")
+						.row
+							.navbar.navbar-inverse
+								.navbar-brand John Doe
+							.col-md-8
+								h5 Post title
+								img.img-responsive.img-thumbnail(src="/img/t20final.jpg", alt="holder.js/560x315")
+							.col-md-4
+								h5.text-right Date
+								.well
+									h6 Tagged
+									ul
+										li user 1
+										li user 2
+						hr
+						.row
+							.btn-group.btn-group-justified
+								a.btn.btn-primary 
+									span.glyphicon.glyphicon-chevron-up
+									|   Upvote
+								a.btn.btn-info 
+									span.glyphicon.glyphicon-chevron-down
+									|   Downvote
+								a.btn.btn-success 
+									span.glyphicon.glyphicon-share
+									|   Share
+					hr
+					.list-group-item.row(style="background-color:rgb(252,252,252);")
+						.row
+							.navbar.navbar-inverse
+								.navbar-brand John Doe
+							.col-md-8
+								h5 Post title
+								img.img-responsive(src="/img/t20final.jpg")
+							.col-md-4
+								h5.text-right Date
+								.well
+									h6 Tagged
+									ul
+										li user 1
+										li user 2
+						hr
+						.row
+							.col-md-4.text-center
+								h5 Upvote
+							.col-md-4.text-center
+								h5 Downvote
+							.col-md-4.text-center
+								h5 Share
+					hr
