@@ -76,13 +76,14 @@ console.log('Creating/Finding user');
 var $el = $('#mainFeed');
 var listView = new infinity.ListView($el); 
 
-function newsFeedItemHTML(post_by, post_title, post_date, post_tags, post_link){
+function newsFeedItemHTML(post_by, post_title, post_date, post_tags, post_link, post_type){
 	var HTML = "";
 
 	HTML += '<div style="background-color:rgb(252,252,252);" class="list-group-item row">';
 	HTML +=	'	<div class="row">';
 	HTML += '		<div class="navbar navbar-inverse">';
-	HTML += '			<div class="navbar-brand">'+JSON.parse(post_by).name+'</div>';
+	HTML += '			<div class="navbar-brand">'+JSON.parse(post_by).name+'</div>'
+	HTML += '   			<span class="badge badge-important navbar-text navbar-right">'+post_type+'</span>';
 	HTML += '		</div>';
 	HTML += '		<div class="col-md-8">';
 	HTML += '			<h5>'+post_title+'</h5>';
@@ -210,12 +211,12 @@ function populateFeed(fbid){
 
 function addToFeed(items){
 	for (var i=0; i<items.length; i++){
-		addItemToFeed(items[i].post_by, items[i].post_title, items[i].created_time, items[i].post_tags, items[i].post_link);
+		addItemToFeed(items[i].post_by, items[i].post_title, items[i].created_time, items[i].post_tags, items[i].post_link, items[i].post_type);
 	}
 }
 
-function addItemToFeed(post_by, post_title, post_date, post_tags, post_link){
-	var newContent = newsFeedItemHTML(post_by, post_title, post_date, post_tags, post_link);
+function addItemToFeed(post_by, post_title, post_date, post_tags, post_link, post_type){
+	var newContent = newsFeedItemHTML(post_by, post_title, post_date, post_tags, post_link, post_type);
 	$('#mainFeed').append(newContent);
 	console.log("Appending to listview");
 }
