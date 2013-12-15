@@ -70,6 +70,20 @@ exports.postlist = function postlist(id, callback){
 };
 
 //scrapePagination
+exports.checkPagination = function checkPagination(fbid, callback){
+	var Pagination = mongoose.model('ScrapeData');
+
+	Pagination.find({fb_id:fbid}, function(err, result){
+		if (err){
+			console.log(err);
+			callback(err, result);
+			return;
+		}
+
+		callback(err, result);
+	});
+}
+
 
 exports.postNewPaginationParams = function postNewPaginationParams(params, callback){
 	var Pagination = mongoose.model('ScrapeData');

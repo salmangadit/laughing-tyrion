@@ -52,8 +52,13 @@ console.log('Creating/Finding user');
 				console.log(result);
 				switch (result) {
 					case true:
-						console.log("Successful data POST");
-						scrapeFeed(response.id);
+						console.log(result);
+						if (result == "Data found"){
+							populateFeed(fbid);
+						} else {
+							scrapeFeed(response.id);
+						}
+						
 						break;
 					default:
 						console.log("Went to default");
@@ -170,7 +175,7 @@ var fuzzyFacebookTime = (function(){
 
 	return fuzzyTime;
 	
-	}());
+}());
 
 function scrapeFeed(fbid){
 	$.ajax({
@@ -178,6 +183,7 @@ function scrapeFeed(fbid){
 		type: "GET",
 		success: function (result) {
 			//- console.log("Result:" + result);
+
 			populateFeed(fbid);
 		},
 		error: function (xhr, ajaxOptions, thrownError) {

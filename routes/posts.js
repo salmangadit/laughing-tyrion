@@ -24,24 +24,22 @@ exports.findByPostId = function(req, res){
 }
 
 exports.scrapeFeed = function(req, res){
-	var fbid = req.params.id;
-	users.getOne(req.params.fbid, function(err, result){
-		if (err) return console.log(err);
-		//Use this user info to get fb stuff
-		getFBfeed(result, res);
-	});
+	var fbid = req.params.fbid;
+	checkPreviousScrapeData(fbid, req, res);
 }
 
 function getFBfeed(user, res){
 	var itemCount = 0;
 	var pagination = "";
 	var postArray = [];
-	//console.log(user);
+	console.log("FB feed scraping");
+	
+	console.log(user);
 	var call = 'https://graph.facebook.com/'+user.fb_id+"/feed?access_token="+user.fb_token+"&fields=type,source,from,to,full_picture&limit=100";
-	//console.log(call);
+	console.log(call);
 	request(call, function (error, response, body) {
-		//console.log(response.statusCode);
-		//console.log(body);
+		console.log(response.statusCode);
+		console.log(body);
 		if (!error && response.statusCode == 200) {
 			var videoArray = [];
 			var videoData = JSON.parse(body);
@@ -136,6 +134,23 @@ function getFBfeed(user, res){
 		 	}//end for
 		} //end if (!error && response.statusCode == 200)
 	}); //end fb request
+}
+
+function checkPreviousScrapeData(fbid, req, res){
+	posts.checkPagination(req.params.fbid, function(err, result){
+		if (result.length > 0){
+			console.log("data found for id: " + req.params.fbid);
+			res.end("Data found");
+		} else {
+			console.log("Nothing found, fresh scrape for id: " + req.params.fbid);
+			users.getOne(req.params.fbid, function(err, result){
+			if (err) return console.log(err);
+				//Use this user info to get fb stuff
+				console.log("users.geOne: " + result);
+				getFBfeed(result, res);
+			});	
+		}
+	});
 }
 
 function renderCompleted(fbid, pagination, postArray, res){
