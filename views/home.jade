@@ -43,8 +43,27 @@ block content
 
 	.container	
 		div.row
-			div.col-md-3
-				h1 Filter bar here
+			div.col-md-2
+				h3#filterBy Filter by:
+				.sidebar-nav.panel.panel-success
+					ul.nav.nav-list.accordion#sidenav-accordion
+						li
+							.accordion-heading
+								a(data-toggle="collapse", data-target="#content-areas").panel-heading
+									span.nav-header-primary.panel-title
+										span.glyphicon.glyphicon-plus-sign
+										|    Type
+							ul.nav.nav-list.collapse.in#content-areas
+								li
+									a(onclick="javascript:filterMusic()", title="Title")
+										span.glyphicon.glyphicon-play-circle 
+										|   Music
+								li
+									a(onclick="javascript:filterVideos()", title="Title") 
+										span.glyphicon.glyphicon-play-circle
+										|   Videos
+				a.btn.btn-warning.btn-xs.currentFilter.hidden(onclick="javascript:removeFilter();") Remove Filter
+			div.col-md-1
 			div.col-md-9.list-group#mainFeed
 				//- .list-group-item.row(style="background-color:rgb(252,252,252);")
 				//- 	.row

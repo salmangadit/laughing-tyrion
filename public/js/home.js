@@ -76,14 +76,14 @@ console.log('Creating/Finding user');
 var $el = $('#mainFeed');
 var listView = new infinity.ListView($el); 
 
-function newsFeedItemHTML(post_by, post_title, post_date, post_tags, post_link, post_type){
+function newsFeedItemHTML(post_by, post_title, post_date, post_tags, post_link, post_type, index){
 	var HTML = "";
 
-	HTML += '<div style="background-color:rgb(252,252,252);" class="list-group-item row">';
+	HTML += '<div style="background-color:rgb(252,252,252);" class="list-group-item row" id="newsFeedItem'+index+'">';
 	HTML +=	'	<div class="row">';
 	HTML += '		<div class="navbar navbar-inverse">';
 	HTML += '			<div class="navbar-brand">'+JSON.parse(post_by).name+'</div>'
-	HTML += '   			<span class="badge badge-important navbar-text navbar-right">'+post_type+'</span>';
+	HTML += '   			<span class="badge badge-important navbar-text navbar-right" id="newsFeedItemType'+index+'">'+post_type+'</span>';
 	HTML += '		</div>';
 	HTML += '		<div class="col-md-8">';
 	HTML += '			<h5>'+post_title+'</h5>';
@@ -110,7 +110,7 @@ function newsFeedItemHTML(post_by, post_title, post_date, post_tags, post_link, 
 	HTML += '		</div>';
 	HTML += '	</div>';
 	HTML += '</div>';
-	HTML += '<hr/>';
+	HTML += '<hr id="newsFeedHR'+index+'"/>';
 
 	return HTML;
 }
@@ -193,13 +193,14 @@ function scrapeFeed(fbid){
 		}
 	});
 }
-
+var feedResult;
 function populateFeed(fbid){
 	$.ajax({
 		url: "/user/"+fbid+"/posts",
 		type: "GET",
 		success: function (result) {
 			console.log("Feed length:" + result.length);
+			feedResult = result;
 			addToFeed(result);
 		},
 		error: function (xhr, ajaxOptions, thrownError) {
@@ -211,12 +212,12 @@ function populateFeed(fbid){
 
 function addToFeed(items){
 	for (var i=0; i<items.length; i++){
-		addItemToFeed(items[i].post_by, items[i].post_title, items[i].created_time, items[i].post_tags, items[i].post_link, items[i].post_type);
+		addItemToFeed(items[i].post_by, items[i].post_title, items[i].created_time, items[i].post_tags, items[i].post_link, items[i].post_type, i);
 	}
 }
 
-function addItemToFeed(post_by, post_title, post_date, post_tags, post_link, post_type){
-	var newContent = newsFeedItemHTML(post_by, post_title, post_date, post_tags, post_link, post_type);
+function addItemToFeed(post_by, post_title, post_date, post_tags, post_link, post_type, index){
+	var newContent = newsFeedItemHTML(post_by, post_title, post_date, post_tags, post_link, post_type, index);
 	$('#mainFeed').append(newContent);
 	console.log("Appending to listview");
 }
@@ -236,4 +237,35 @@ function login() {
 	}, {scope: 'email,read_stream'});
 
 	info();
+}
+
+function filterMusic(){
+	for (var i=0; i< feedResult.length; i++){
+		if (feedResult[i].post_type != "music"){
+			$('#newsFeedItem'+i).addClass('hidden');
+			$('#newsFeedHR'+i).addClass('hidden');
+		}
+	}
+	$('#filterBy').append('<h6 class="removeFilterBy"><strong>Music</strong></h6>')
+	$('.currentFilter').removeClass('hidden');
+}
+
+function filterVideos(){
+	for (var i=0; i< feedResult.length; i++){
+		if (feedResult[i].post_type != "video"){
+			$('#newsFeedItem'+i).addClass('hidden');
+			$('#newsFeedHR'+i).addClass('hidden');
+		}
+	}
+	$('#filterBy').append('<h6 class="removeFilterBy"><strong>Videos</strong></h6>')
+	$('.currentFilter').removeClass('hidden');
+}
+
+function removeFilter(){
+	for (var i=0; i< feedResult.length; i++){
+		$('#newsFeedItem'+i).removeClass('hidden');
+		$('#newsFeedHR'+i).removeClass('hidden');
+	}
+	$('.removeFilterBy').remove();
+	$('.currentFilter').addClass('hidden');
 }
