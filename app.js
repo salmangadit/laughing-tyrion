@@ -45,6 +45,9 @@ app.post('/posts', posts.createPosts);
 //scrapers
 app.get('/poster/:fbid', posts.scrapeFeed);
 
+//Render
+app.get('/home', routes.home);
+
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
 });

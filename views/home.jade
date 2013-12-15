@@ -1,0 +1,99 @@
+extends layout
+
+block styles
+	link(rel='stylesheet', href='/css/bootstrap.min.css')
+		link(rel='stylesheet', href='/css/responsive-video.css')
+
+block scripts
+	script(src='http://code.jquery.com/jquery.js')
+	script(src='/js/lib/bootstrap.js')
+	script(src='http://static.ak.fbcdn.net/connect/en_US/core.js')
+	script(src='/js/lib/infinity.min.js')
+
+block content
+	div(id="fb-root")
+	script(src='/js/home.js')
+
+	.navbar.navbar-default
+		.container
+			.navbar-header
+				button.navbar-toggle(type="button", data-toggle="collapse", data-target=".navbar-responsive-collapse")
+					span.icon-bar
+					span.icon-bar
+					span.icon-bar
+				a.navbar-brand(href="/") Shelf
+			.navbar-collapse.collapse.navbar-responsive-collapse
+				ul.nav.navbar-nav
+					li.active
+						a(href="#") Home
+					li
+						a(href="#") Library
+					li
+						a(href="#") Invite
+					li
+						a(href="#") About
+				ul.nav.navbar-nav.navbar-right
+					li
+						a(href="#") Profile
+					li
+						a(href="#") Settings
+					li
+						a(href="#") Logout
+
+	.container	
+		div.row
+			div.col-md-3
+				h1 Filter bar here
+			div.col-md-9.list-group#mainFeed
+				//- .list-group-item.row(style="background-color:rgb(252,252,252);")
+				//- 	.row
+				//- 		.navbar.navbar-inverse
+				//- 			.navbar-brand Salman Gadit
+				//- 		.col-md-8
+				//- 			h5 Redemption Song (Bob Marley acoustic cover) - Taariq
+				//- 			iframe.img-responsive(width="640", height="315", src="http://www.youtube.com/v/3_U2W2NBOUQ", frameborder="0", allowfullscreen)
+				//- 		.col-md-4
+				//- 			h5.text-right 2013-10-28T11:41:59+0000
+				//- 			.well
+				//- 				h6 Tagged
+				//- 				ul
+				//- 	br
+				//- 	.row
+				//- 		.btn-group.btn-group-justified
+				//- 			a.btn.btn-primary 
+				//- 				span.glyphicon.glyphicon-chevron-up
+				//- 				|   Upvote
+				//- 			a.btn.btn-info 
+				//- 				span.glyphicon.glyphicon-chevron-down
+				//- 				|   Downvote
+				//- 			a.btn.btn-success 
+				//- 				span.glyphicon.glyphicon-share
+				//- 				|   Share
+				//- hr
+				//- .list-group-item.row(style="background-color:rgb(252,252,252);")
+				//- 	.row
+				//- 		.navbar.navbar-inverse
+				//- 			.navbar-brand John Doe
+				//- 		.col-md-8
+				//- 			h5 Post title
+				//- 			iframe.img-responsive.flex-video(width="560", src="//www.youtube.com/v/mllXxyHTzfg", frameborder="0", allowfullscreen)
+				//- 		.col-md-4
+				//- 			h5.text-right Date
+				//- 			.well
+				//- 				h6 Tagged
+				//- 				ul
+				//- 					li user 1
+				//- 					li user 2
+				//- 	br
+				//- 	.row
+				//- 		.btn-group.btn-group-justified
+				//- 			a.btn.btn-primary 
+				//- 				span.glyphicon.glyphicon-chevron-up
+				//- 				|   Upvote
+				//- 			a.btn.btn-info 
+				//- 				span.glyphicon.glyphicon-chevron-down
+				//- 				|   Downvote
+				//- 			a.btn.btn-success 
+				//- 				span.glyphicon.glyphicon-share
+				//- 				|   Share
+				//- hr
