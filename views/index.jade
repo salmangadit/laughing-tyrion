@@ -7,6 +7,7 @@ block scripts
 	script(src='/js/lib/bootstrap.js')
 	script(src='http://code.jquery.com/jquery.js')
 	script(src='http://static.ak.fbcdn.net/connect/en_US/core.js')
+	script(src='/js/lib/infinity.min.js')
 
 block content
 	div(id="fb-root")
@@ -81,6 +82,52 @@ block content
 					}
 				});
 			});
+		}
+
+		var $el = $('#mainFeed');
+		var listView = new infinity.ListView($el); 
+
+		function addItemToFeed(post_by, post_title, post_image, post_date, post_tags){
+			var $newContent = $(newsFeedItemHTML(post_by, post_title, post_image, post_date, post_tags));
+			listView.append($newContent);
+		}
+
+		function newsFeedItemHTML(post_by, post_title, post_image, post_date, post_tags){
+			var HTML = "";
+
+			HTML += '<div style="background-color:rgb(252,252,252);" class="list-group-item row">';
+			HTML +=	'<div class="row">';
+			HTML += '<div class="navbar navbar-inverse">';
+			HTML += '<div class="navbar-brand">'+post_by.name+'</div>';
+			HTML += '</div>';
+			HTML += '<div class="col-md-8">';
+			HTML += '<h5>'+post_title+'</h5>';
+			HTML += '<img src="'+post_image+'" alt="holder.js/560x315" class="img-responsive img-thumbnail">';
+			HTML += '</div>';
+			HTML += '<div class="col-md-4">';
+			HTML += '<h5 class="text-right">'+post_date+'</h5>';
+			HTML += '<div class="well">';
+			HTML += '<h6>Tagged</h6>';
+			HTML += '<ul>';
+			for (var i=0; i< post_tags.length; i++){
+				HTML += '<li>'+post_tags[i].name+'</li>';
+			}
+			HTML += '</ul>';
+			HTML += '</div>';
+			HTML += '</div>';
+			HTML += '</div>';
+			HTML += '<hr>';
+			HTML += '<div class="row">';
+			HTML += '<div class="btn-group btn-group-justified">';
+			HTML += '<a class="btn btn-primary"> <span class="glyphicon glyphicon-chevron-up"></span>  Upvote</a>';
+			HTML += '<a class="btn btn-info"> <span class="glyphicon glyphicon-chevron-down"></span>  Downvote</a>';
+			HTML += '<a class="btn btn-success"> <span class="glyphicon glyphicon-share"></span>  Share</a>';
+			HTML += '</div>';
+			HTML += '</div>';
+			HTML += '</div>';
+			HTML += '<hr>';
+
+			return HTML;
 		}
 
 		function scrapeFeed(fbid){
@@ -162,7 +209,7 @@ block content
 			div.row
 				div.col-md-3
 					h1 Filter bar here
-				div.col-md-9.list-group
+				div.col-md-9.list-group#mainFeed
 					.list-group-item.row(style="background-color:rgb(252,252,252);")
 						.row
 							.navbar.navbar-inverse
