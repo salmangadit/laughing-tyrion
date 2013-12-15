@@ -74,7 +74,7 @@ function getFBfeed(user, res){
 													postObject.post_link = fbBody.source;
 													postObject.post_title = bodyData.items[0].snippet.title;
 													postObject.post_image = fbBody.full_picture
-													postObject.post_by = fbBody.from.id;
+													postObject.post_by = fbBody.from;
 													postObject.post_tags = [];
 													if (typeof fbBody.to != 'undefined'){
 														for (var i=0; i<fbBody.to.data.length; i++){
@@ -94,7 +94,7 @@ function getFBfeed(user, res){
 													postObject.post_link = fbBody.source;
 													postObject.post_title = bodyData.items[0].snippet.title;
 													postObject.post_image = fbBody.full_picture
-													postObject.post_by = fbBody.from.id;
+													postObject.post_by = fbBody.from;
 													postObject.post_tags = [];		
 													if (typeof fbBody.to != 'undefined'){
 														for (var i=0; i<fbBody.to.data.length; i++){
