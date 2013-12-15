@@ -11,8 +11,8 @@ FB.Event.subscribe('auth.authResponseChange', function(response) {
 	// Here we specify what we do with the response anytime this event occurs. 
 	if (response.status === 'connected') {
 		console.log(window.location);
-		if (window.location.pathname != "/login"){
-			window.location = "/login";
+		if (window.location.pathname != "/home"){
+			window.location = "/home";
 			return;
 		}
 
@@ -23,8 +23,6 @@ FB.Event.subscribe('auth.authResponseChange', function(response) {
 		FB.login();
 	}
 });
-
-console.log(#{isLoggedIn});
 };
 
 // Load the SDK asynchronously
