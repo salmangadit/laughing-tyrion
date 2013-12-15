@@ -2,10 +2,11 @@ extends layout
 
 block styles
 	link(rel='stylesheet', href='/css/bootstrap.min.css')
+		link(rel='stylesheet', href='/css/responsive-video.css')
 
 block scripts
-	script(src='/js/lib/bootstrap.js')
 	script(src='http://code.jquery.com/jquery.js')
+	script(src='/js/lib/bootstrap.js')
 	script(src='http://static.ak.fbcdn.net/connect/en_US/core.js')
 	script(src='/js/lib/infinity.min.js')
 
@@ -87,62 +88,147 @@ block content
 		var $el = $('#mainFeed');
 		var listView = new infinity.ListView($el); 
 
-		function addItemToFeed(post_by, post_title, post_image, post_date, post_tags){
-			var $newContent = $(newsFeedItemHTML(post_by, post_title, post_image, post_date, post_tags));
-			listView.append($newContent);
-		}
-
-		function newsFeedItemHTML(post_by, post_title, post_image, post_date, post_tags){
+		function newsFeedItemHTML(post_by, post_title, post_date, post_tags, post_link){
 			var HTML = "";
 
 			HTML += '<div style="background-color:rgb(252,252,252);" class="list-group-item row">';
-			HTML +=	'<div class="row">';
-			HTML += '<div class="navbar navbar-inverse">';
-			HTML += '<div class="navbar-brand">'+post_by.name+'</div>';
-			HTML += '</div>';
-			HTML += '<div class="col-md-8">';
-			HTML += '<h5>'+post_title+'</h5>';
-			HTML += '<img src="'+post_image+'" alt="holder.js/560x315" class="img-responsive img-thumbnail">';
-			HTML += '</div>';
-			HTML += '<div class="col-md-4">';
-			HTML += '<h5 class="text-right">'+post_date+'</h5>';
-			HTML += '<div class="well">';
-			HTML += '<h6>Tagged</h6>';
-			HTML += '<ul>';
+			HTML +=	'	<div class="row">';
+			HTML += '		<div class="navbar navbar-inverse">';
+			HTML += '			<div class="navbar-brand">'+JSON.parse(post_by).name+'</div>';
+			HTML += '		</div>';
+			HTML += '		<div class="col-md-8">';
+			HTML += '			<h5>'+post_title+'</h5>';
+			HTML += '			<iframe class="img-responsive flex-video", width="560", src="'+post_link+'", frameborder="0", allowfullscreen/>';
+			HTML += '		</div>';
+			HTML += '		<div class="col-md-4">';
+			HTML += '			<h5 class="text-right">'+fuzzyFacebookTime(post_date.replace(/-/g,'/'))+'</h5>';
+			HTML += '			<div class="well">';
+			HTML += '				<h6>Tagged</h6>';
+			HTML += '				<ul>';
 			for (var i=0; i< post_tags.length; i++){
-				HTML += '<li>'+post_tags[i].name+'</li>';
+				HTML += '<li>'+JSON.parse(post_tags[i]).name+'</li>';
 			}
-			HTML += '</ul>';
+			HTML += '				</ul>';
+			HTML += '			</div>';
+			HTML += '		</div>';
+			HTML += '	</div>';
+			HTML += '	<br/>';
+			HTML += '	<div class="row">';
+			HTML += '		<div class="btn-group btn-group-justified">';
+			HTML += '			<a class="btn btn-primary"> <span class="glyphicon glyphicon-chevron-up"></span>  Upvote</a>';
+			HTML += '			<a class="btn btn-info"> <span class="glyphicon glyphicon-chevron-down"></span>  Downvote</a>';
+			HTML += '			<a class="btn btn-success"> <span class="glyphicon glyphicon-share"></span>  Share</a>';
+			HTML += '		</div>';
+			HTML += '	</div>';
 			HTML += '</div>';
-			HTML += '</div>';
-			HTML += '</div>';
-			HTML += '<hr>';
-			HTML += '<div class="row">';
-			HTML += '<div class="btn-group btn-group-justified">';
-			HTML += '<a class="btn btn-primary"> <span class="glyphicon glyphicon-chevron-up"></span>  Upvote</a>';
-			HTML += '<a class="btn btn-info"> <span class="glyphicon glyphicon-chevron-down"></span>  Downvote</a>';
-			HTML += '<a class="btn btn-success"> <span class="glyphicon glyphicon-share"></span>  Share</a>';
-			HTML += '</div>';
-			HTML += '</div>';
-			HTML += '</div>';
-			HTML += '<hr>';
+			HTML += '<hr/>';
 
 			return HTML;
 		}
 
+		var fuzzyFacebookTime = (function(){
+			fuzzyTime.defaultOptions={
+				// time display options
+				relativeTime : 48,
+				// language options
+				monthNames : ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+				amPm : ['AM', 'PM'],
+				ordinalSuffix : function(n) {return ['th','st','nd','rd'][n<4 || (n>20 && n % 10<4) ? n % 10 : 0]}
+			}
+		
+			function fuzzyTime (timeValue, options) {
+		
+				var options=options||fuzzyTime.defaultOptions, 
+					date=parseDate(timeValue),
+					delta=parseInt(((new Date()).getTime()-date.getTime())/1000),
+					relative=options.relativeTime,
+					cutoff=+relative===relative ? relative*60*60 : Infinity;
+		
+				if (relative===false || delta>cutoff)
+				return formatTime(date, options)+' '+formatDate(date, options);
+		
+				if (delta<60) return 'less than a minute ago';
+				var minutes=parseInt(delta/60 +0.5);
+				if (minutes <= 1) return 'about a minute ago';
+				var hours=parseInt(minutes/60 +0.5);
+				if (hours<1) return minutes+' minutes ago';
+				if (hours==1) return 'about an hour ago';
+				var days=parseInt(hours/24 +0.5);
+				if (days<1) return hours+' hours ago';
+				if (days==1) return formatTime(date, options)+' yesterday';
+				var weeks=parseInt(days/7 +0.5);
+				if (weeks<2) return formatTime(date, options)+' '+days+' days ago';
+				var months=parseInt(weeks/4.34812141 +0.5);
+				if (months<2) return weeks+' weeks ago';
+				var years=parseInt(months/12 +0.5);
+				if (years<2) return months+' months ago';
+				return years+' years ago';
+			}
+		
+			function parseDate (str) {
+				var v=str.replace(/[T\+]/g,' ').split(' ');
+				return new Date(Date.parse(v[0] + " " + v[1] + " UTC"));
+			}
+		
+			function formatTime (date, options) {
+				var h=date.getHours(), m=''+date.getMinutes(), am=options.amPm;
+				return (h>12 ? h-12 : h)+':'+(m.length==1 ? '0' : '' )+m+' '+(h<12 ? am[0] : am[1]);
+			}
+		
+			function formatDate (date, options) {
+				var mon=options.monthNames[date.getMonth()],
+					day=date.getDate(),
+					year=date.getFullYear(),
+					thisyear=(new Date()).getFullYear(),
+					suf=options.ordinalSuffix(day);
+		
+				return mon+' '+day+suf+(thisyear!=year ? ', '+year : '');
+			}
+		
+			return fuzzyTime;
+			
+			}());
+
 		function scrapeFeed(fbid){
-				$.ajax({
-					url: "/poster/"+fbid,
-					type: "GET",
-					success: function (result) {
-						console.log("Result:" + result);
-						//This should trigger feed and in backend scraping must continue
-					},
-					error: function (xhr, ajaxOptions, thrownError) {
-						console.log(xhr.status);
-						console.log(thrownError);
-					}
-				});
+			$.ajax({
+				url: "/poster/"+fbid,
+				type: "GET",
+				success: function (result) {
+					//- console.log("Result:" + result);
+					populateFeed(fbid);
+				},
+				error: function (xhr, ajaxOptions, thrownError) {
+					console.log(xhr.status);
+					console.log(thrownError);
+				}
+			});
+		}
+
+		function populateFeed(fbid){
+			$.ajax({
+				url: "/user/"+fbid+"/posts",
+				type: "GET",
+				success: function (result) {
+					console.log("Feed length:" + result.length);
+					addToFeed(result);
+				},
+				error: function (xhr, ajaxOptions, thrownError) {
+					console.log(xhr.status);
+					console.log(thrownError);
+				}
+			});
+		}
+
+		function addToFeed(items){
+			for (var i=0; i<items.length; i++){
+				addItemToFeed(items[i].post_by, items[i].post_title, items[i].created_time, items[i].post_tags, items[i].post_link);
+			}
+		}
+
+		function addItemToFeed(post_by, post_title, post_date, post_tags, post_link){
+			var newContent = newsFeedItemHTML(post_by, post_title, post_date, post_tags, post_link);
+			$('#mainFeed').append(newContent);
+			console.log("Appending to listview");
 		}
 
 		function login() {
@@ -198,65 +284,61 @@ block content
 							a(href="#") Settings
 						li
 							a(href="#") Logout
-						
-		//- div(class="header row well")
-		//- 	div(class="col-md-3")
-		//- 		h1 Shelf
-		//- 		h6 Because every wall needs one
-		//- 	div(class="col-md-9")
 
 		.container	
 			div.row
 				div.col-md-3
 					h1 Filter bar here
 				div.col-md-9.list-group#mainFeed
-					.list-group-item.row(style="background-color:rgb(252,252,252);")
-						.row
-							.navbar.navbar-inverse
-								.navbar-brand John Doe
-							.col-md-8
-								h5 Post title
-								img.img-responsive.img-thumbnail(src="/img/t20final.jpg", alt="holder.js/560x315")
-							.col-md-4
-								h5.text-right Date
-								.well
-									h6 Tagged
-									ul
-										li user 1
-										li user 2
-						hr
-						.row
-							.btn-group.btn-group-justified
-								a.btn.btn-primary 
-									span.glyphicon.glyphicon-chevron-up
-									|   Upvote
-								a.btn.btn-info 
-									span.glyphicon.glyphicon-chevron-down
-									|   Downvote
-								a.btn.btn-success 
-									span.glyphicon.glyphicon-share
-									|   Share
-					hr
-					.list-group-item.row(style="background-color:rgb(252,252,252);")
-						.row
-							.navbar.navbar-inverse
-								.navbar-brand John Doe
-							.col-md-8
-								h5 Post title
-								img.img-responsive(src="/img/t20final.jpg")
-							.col-md-4
-								h5.text-right Date
-								.well
-									h6 Tagged
-									ul
-										li user 1
-										li user 2
-						hr
-						.row
-							.col-md-4.text-center
-								h5 Upvote
-							.col-md-4.text-center
-								h5 Downvote
-							.col-md-4.text-center
-								h5 Share
-					hr
+					//- .list-group-item.row(style="background-color:rgb(252,252,252);")
+					//- 	.row
+					//- 		.navbar.navbar-inverse
+					//- 			.navbar-brand Salman Gadit
+					//- 		.col-md-8
+					//- 			h5 Redemption Song (Bob Marley acoustic cover) - Taariq
+					//- 			iframe.img-responsive(width="640", height="315", src="http://www.youtube.com/v/3_U2W2NBOUQ", frameborder="0", allowfullscreen)
+					//- 		.col-md-4
+					//- 			h5.text-right 2013-10-28T11:41:59+0000
+					//- 			.well
+					//- 				h6 Tagged
+					//- 				ul
+					//- 	br
+					//- 	.row
+					//- 		.btn-group.btn-group-justified
+					//- 			a.btn.btn-primary 
+					//- 				span.glyphicon.glyphicon-chevron-up
+					//- 				|   Upvote
+					//- 			a.btn.btn-info 
+					//- 				span.glyphicon.glyphicon-chevron-down
+					//- 				|   Downvote
+					//- 			a.btn.btn-success 
+					//- 				span.glyphicon.glyphicon-share
+					//- 				|   Share
+					//- hr
+					//- .list-group-item.row(style="background-color:rgb(252,252,252);")
+					//- 	.row
+					//- 		.navbar.navbar-inverse
+					//- 			.navbar-brand John Doe
+					//- 		.col-md-8
+					//- 			h5 Post title
+					//- 			iframe.img-responsive.flex-video(width="560", src="//www.youtube.com/v/mllXxyHTzfg", frameborder="0", allowfullscreen)
+					//- 		.col-md-4
+					//- 			h5.text-right Date
+					//- 			.well
+					//- 				h6 Tagged
+					//- 				ul
+					//- 					li user 1
+					//- 					li user 2
+					//- 	br
+					//- 	.row
+					//- 		.btn-group.btn-group-justified
+					//- 			a.btn.btn-primary 
+					//- 				span.glyphicon.glyphicon-chevron-up
+					//- 				|   Upvote
+					//- 			a.btn.btn-info 
+					//- 				span.glyphicon.glyphicon-chevron-down
+					//- 				|   Downvote
+					//- 			a.btn.btn-success 
+					//- 				span.glyphicon.glyphicon-share
+					//- 				|   Share
+					//- hr

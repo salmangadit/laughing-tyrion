@@ -10,7 +10,7 @@ exports.createPosts = function(req, res){
 }
 
 exports.findByUser = function(req, res){
-  posts.postlistByUser(req.params.id, function(err, result){
+  posts.postlistByUser(req.params.fbid, function(err, result){
   	if(err) return console.log(err);
   	res.send(result);
   })
@@ -48,8 +48,11 @@ function getFBfeed(user, res){
 			
 			pagination = videoData.paging;
 		 	for (var i=0; i<videoData.data.length; i++){
-		 		if (videoData.data[i].type == "video")
+		 		if (videoData.data[i].type == "video" || 
+		 			(typeof videoData.data[i].source != "undefined" ? 
+		 				(videoData.data[i].source.indexOf("youtube.com") != -1 ) : false) )
 				{
+					// console.log(videoData.data[i].source);
 		 			if (videoData.data[i].source.indexOf("youtube.com") != -1){
 		 				itemCount++;
 		 				//console.log(itemCount);
@@ -58,10 +61,10 @@ function getFBfeed(user, res){
 		 					request("https://www.googleapis.com/youtube/v3/videos?id="+videoId+"&key=AIzaSyAZLyBapbZnXBef4-gqQiKrYEXtOfRDyh0&part=snippet&fields=items(snippet(categoryId, title))", function (error, response, body) {
 								//console.log("i is " + index );
 								itemCount--;
-								//console.log(videoData.data[index]);
 								var fbBody = videoData.data[index];
 								if (!error && response.statusCode == 200) {
 									var bodyData = JSON.parse(body);
+									console.log(JSON.stringify(bodyData));
 									if (typeof bodyData.items[0] != 'undefined'){
 										if (typeof bodyData.items[0].snippet != 'undefined'){
 											if (typeof bodyData.items[0].snippet.categoryId != 'undefined'){
@@ -71,10 +74,16 @@ function getFBfeed(user, res){
 													postObject.fb_id = user.fb_id;
 													postObject.post_id = fbBody.id;
 													postObject.post_type = 'music';
+													if (fbBody.source.indexOf("?") != -1){
+														fbBody.source = fbBody.source.substring(0, 36);
+													} else {
+														fbBody.source = fbBody.source
+													}
+													
 													postObject.post_link = fbBody.source;
 													postObject.post_title = bodyData.items[0].snippet.title;
 													postObject.post_image = fbBody.full_picture
-													postObject.post_by = fbBody.from;
+													postObject.post_by = JSON.stringify(fbBody.from);
 													postObject.post_tags = [];
 													if (typeof fbBody.to != 'undefined'){
 														for (var i=0; i<fbBody.to.data.length; i++){
@@ -91,17 +100,22 @@ function getFBfeed(user, res){
 													postObject.fb_id = user.fb_id;
 													postObject.post_id = fbBody.id;
 													postObject.post_type = 'video';
+													if (fbBody.source.indexOf("?") != -1){
+														fbBody.source = fbBody.source.substring(0, 36);
+													} else {
+														fbBody.source = fbBody.source
+													}
 													postObject.post_link = fbBody.source;
 													postObject.post_title = bodyData.items[0].snippet.title;
 													postObject.post_image = fbBody.full_picture
-													postObject.post_by = fbBody.from;
+													postObject.post_by = JSON.stringify(fbBody.from);
 													postObject.post_tags = [];		
 													if (typeof fbBody.to != 'undefined'){
 														for (var i=0; i<fbBody.to.data.length; i++){
 															postObject.post_tags.push(JSON.stringify(fbBody.to.data[i]));
 														}
 													}
-													
+												
 													postObject.created_time = fbBody.created_time;
 
 													postArray.push(postObject);
