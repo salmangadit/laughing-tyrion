@@ -95,7 +95,12 @@ function newsFeedItemHTML(post_by, post_title, post_date, post_tags, post_link, 
 	HTML += '				<h6>Tagged</h6>';
 	HTML += '				<ul>';
 	for (var i=0; i< post_tags.length; i++){
-		HTML += '<li>'+JSON.parse(post_tags[i]).name+'</li>';
+		HTML += '<li>'
+		HTML += '	<div class="circle_avatar">'
+		HTML += '		<img height="42" width="42" src='+ 'http://graph.facebook.com/' + JSON.parse(post_tags[i]).id + '/picture?type=square alt="">';
+		HTML += '	</div>'
+		HTML += '	<h7 style="float:right;">'+JSON.parse(post_tags[i]).name+'</h7>';
+		HTML += '</li>'
 	}
 	HTML += '				</ul>';
 	HTML += '			</div>';

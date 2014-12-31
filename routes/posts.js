@@ -139,7 +139,8 @@ function getFBfeed(user, res){
 function checkPreviousScrapeData(fbid, req, res){
 	posts.checkPagination(req.params.fbid, function(err, result){
 		if (result.length > 0){
-			console.log("data found for id: " + req.params.fbid);
+			console.log("data foundhghgg for id: " + req.params.fbid);
+			console.log("yeehah");
 			res.end("Data found");
 		} else {
 			console.log("Nothing found, fresh scrape for id: " + req.params.fbid);
