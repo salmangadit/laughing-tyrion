@@ -76,6 +76,10 @@ console.log('Creating/Finding user');
 var $el = $('#mainFeed');
 var listView = new infinity.ListView($el); 
 
+$(function () {
+  $('[data-toggle="tooltip"]').tooltip()
+})
+
 function newsFeedItemHTML(post_by, post_title, post_date, post_tags, post_link, post_type, index){
 	var HTML = "";
 
@@ -92,10 +96,11 @@ function newsFeedItemHTML(post_by, post_title, post_date, post_tags, post_link, 
 	HTML += '		<div class="col-md-4">';
 	HTML += '			<h5 class="text-right">'+fuzzyFacebookTime(post_date.replace(/-/g,'/'))+'</h5>';
 	HTML += '			<div class="well">';
-	HTML += '				<h6>Tagged</h6>';
-	HTML += '				<ul>';
+	
 	for (var i=0; i< post_tags.length; i++){
-		HTML += '<li>'+JSON.parse(post_tags[i]).name+'</li>';
+		HTML += '	<div>'
+		HTML += '		<img class="img-circle" data-toggle="tooltip" data-placement="right" title='+JSON.parse(post_tags[i]).name+' height="42" width="42" src='+ 'http://graph.facebook.com/' + JSON.parse(post_tags[i]).id + '/picture?type=square alt="">';
+		HTML += '	</div>'
 	}
 	HTML += '				</ul>';
 	HTML += '			</div>';
@@ -210,6 +215,7 @@ function populateFeed(fbid){
 	});
 }
 
+
 function addToFeed(items){
 	for (var i=0; i<items.length; i++){
 		addItemToFeed(items[i].post_by, items[i].post_title, items[i].created_time, items[i].post_tags, items[i].post_link, items[i].post_type, i);
@@ -260,6 +266,7 @@ function filterVideos(){
 	$('#filterBy').append('<h6 class="removeFilterBy"><strong>Videos</strong></h6>')
 	$('.currentFilter').removeClass('hidden');
 }
+
 
 function removeFilter(){
 	for (var i=0; i< feedResult.length; i++){
