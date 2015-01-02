@@ -96,19 +96,11 @@ function newsFeedItemHTML(post_by, post_title, post_date, post_tags, post_link, 
 	HTML += '		<div class="col-md-4">';
 	HTML += '			<h5 class="text-right">'+fuzzyFacebookTime(post_date.replace(/-/g,'/'))+'</h5>';
 	HTML += '			<div class="well">';
-	HTML += '				<h6>Tagged</h6>';
-	HTML += '				<ul>';
-
+	
 	for (var i=0; i< post_tags.length; i++){
-		HTML += '<li>'
-		HTML += '	<div data-toggle="tooltip" data-placement="right" title='+JSON.parse(post_tags[i]).name+'>'
-		// HTML += '	<div>'
-		HTML += '		<img class="img-circle" height="42" width="42" src='+ 'http://graph.facebook.com/' + JSON.parse(post_tags[i]).id + '/picture?type=square alt="">';
-		//HTML += '		<h6 style="float:right;">'+JSON.parse(post_tags[i]).name+'</h6>';
-		// HTML += '		<button type="button" class="btn btn-default" data-toggle="tooltip" data-placement="left" title="Tooltip on left">Tooltip on left</button>'
+		HTML += '	<div>'
+		HTML += '		<img class="img-circle" data-toggle="tooltip" data-placement="right" title='+JSON.parse(post_tags[i]).name+' height="42" width="42" src='+ 'http://graph.facebook.com/' + JSON.parse(post_tags[i]).id + '/picture?type=square alt="">';
 		HTML += '	</div>'
-		// HTML += '	<a href="#" data-toggle="tooltip" title="Some tooltip text!">Hover over me</a>'
-		HTML += '</li>'
 	}
 	HTML += '				</ul>';
 	HTML += '			</div>';
